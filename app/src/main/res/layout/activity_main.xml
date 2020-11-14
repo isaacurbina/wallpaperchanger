@@ -10,8 +10,14 @@
 		android:layout_centerInParent="true"
 		android:text="@string/choose_from_gallery" />
 
-	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/recyclerView"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent" />
+	<ProgressBar
+		android:id="@+id/progressBar"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:indeterminate="true"
+		android:minWidth="@dimen/progress_bar_width"
+		android:minHeight="@dimen/progress_bar_width"
+		android:visibility="gone" />
+
 </RelativeLayout>
