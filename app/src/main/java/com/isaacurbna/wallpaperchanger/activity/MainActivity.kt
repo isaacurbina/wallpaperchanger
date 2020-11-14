@@ -1,16 +1,15 @@
 package com.isaacurbna.wallpaperchanger.activity
 
 import android.app.WallpaperManager
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -100,26 +99,24 @@ class MainActivity : AppCompatActivity() {
 		val screenWidth: Float
 		val screenHeight: Float
 		val bitmapWidth = bitmap.width.toFloat()
-		val bitmapHeight = bitmap
-			.height.toFloat()
-		val display = (getSystemService(Context.WINDOW_SERVICE) as WindowManager)
-			.defaultDisplay
-		screenWidth = display.width.toFloat()
-		screenHeight = display.height.toFloat()
+		val bitmapHeight = bitmap.height.toFloat()
+		val displayMetrics = DisplayMetrics()
+		screenWidth = 648.0f //displayMetrics.widthPixels.toFloat()
+		screenHeight = 1152.0f //displayMetrics.heightPixels.toFloat()
 		Log.i("TAG", "bitmap_width $bitmapWidth")
 		Log.i("TAG", "bitmap_height $bitmapHeight")
-		val bitmap_ratio = (bitmapWidth / bitmapHeight)
-		val screen_ratio = (screenWidth / screenHeight)
+		val bitmapRatio = (bitmapWidth / bitmapHeight)
+		val screenRatio = (screenWidth / screenHeight)
 		val bitmapNewWidth: Int
 		val bitmapNewHeight: Int
-		Log.i("TAG", "bitmap_ratio $bitmap_ratio")
-		Log.i("TAG", "screen_ratio $screen_ratio")
-		if (screen_ratio > bitmap_ratio) {
+		Log.i("TAG", "bitmap_ratio $bitmapRatio")
+		Log.i("TAG", "screen_ratio $screenRatio")
+		if (screenRatio > bitmapRatio) {
 			bitmapNewWidth = screenWidth.toInt()
-			bitmapNewHeight = (bitmapNewWidth / bitmap_ratio).toInt()
+			bitmapNewHeight = (bitmapNewWidth / bitmapRatio).toInt()
 		} else {
 			bitmapNewHeight = screenHeight.toInt()
-			bitmapNewWidth = (bitmapNewHeight * bitmap_ratio).toInt()
+			bitmapNewWidth = (bitmapNewHeight * bitmapRatio).toInt()
 		}
 		bitmap = Bitmap.createScaledBitmap(
 			bitmap, bitmapNewWidth,
