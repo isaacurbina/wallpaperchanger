@@ -1,6 +1,7 @@
 package com.isaacurbna.wallpaperchanger.activity
 
 import android.app.WallpaperManager
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -10,13 +11,13 @@ import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.isaacurbna.wallpaperchanger.R
 import kotlinx.coroutines.*
-import java.io.IOException
 
 
 class MainActivity : AppCompatActivity() {
@@ -61,9 +62,7 @@ class MainActivity : AppCompatActivity() {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 						manager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK)
 					}
-					Toast.makeText(context, "Wallpaper set!", Toast.LENGTH_SHORT).show()
-				} catch (e: IOException) {
-					Toast.makeText(context, "Error!", Toast.LENGTH_SHORT).show()
+				} catch (ignored: Exception) {
 				}
 			}
 			val job2 = async {
@@ -71,9 +70,7 @@ class MainActivity : AppCompatActivity() {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 						manager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_SYSTEM)
 					}
-					Toast.makeText(context, "Wallpaper set!", Toast.LENGTH_SHORT).show()
-				} catch (e: IOException) {
-					Toast.makeText(context, "Error!", Toast.LENGTH_SHORT).show()
+				} catch (ignored: Exception) {
 				}
 			}
 			val job3 = async {
@@ -81,13 +78,12 @@ class MainActivity : AppCompatActivity() {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 						manager.setBitmap(bitmap)
 					}
-					Toast.makeText(context, "Wallpaper set!", Toast.LENGTH_SHORT).show()
-				} catch (e: IOException) {
-					Toast.makeText(context, "Error!", Toast.LENGTH_SHORT).show()
+				} catch (ignored: Exception) {
 				}
 			}
 			awaitAll(job1, job2, job3)
 			CoroutineScope(Dispatchers.Main).launch {
+				Toast.makeText(context, "Wallpaper set!", Toast.LENGTH_SHORT).show()
 				button.isEnabled = true
 				progressBar.visibility = View.GONE
 			}
@@ -100,11 +96,15 @@ class MainActivity : AppCompatActivity() {
 		val screenHeight: Float
 		val bitmapWidth = bitmap.width.toFloat()
 		val bitmapHeight = bitmap.height.toFloat()
-		val displayMetrics = DisplayMetrics()
-		screenWidth = 648.0f //displayMetrics.widthPixels.toFloat()
-		screenHeight = 1152.0f //displayMetrics.heightPixels.toFloat()
 		Log.i("TAG", "bitmap_width $bitmapWidth")
 		Log.i("TAG", "bitmap_height $bitmapHeight")
+		val displayMetrics = DisplayMetrics()
+		val display = (getSystemService(Context.WINDOW_SERVICE) as WindowManager)
+			.defaultDisplay.getRealMetrics(displayMetrics)
+		screenWidth = displayMetrics.widthPixels.toFloat()
+		screenHeight = displayMetrics.heightPixels.toFloat()
+		Log.i("TAG", "screenWidth $screenWidth")
+		Log.i("TAG", "screenHeight $screenHeight")
 		val bitmapRatio = (bitmapWidth / bitmapHeight)
 		val screenRatio = (screenWidth / screenHeight)
 		val bitmapNewWidth: Int
@@ -122,8 +122,6 @@ class MainActivity : AppCompatActivity() {
 			bitmap, bitmapNewWidth,
 			bitmapNewHeight, true
 		)
-		Log.i("TAG", "screenWidth $screenWidth")
-		Log.i("TAG", "screenHeight $screenHeight")
 		Log.i("TAG", "bitmapNewWidth $bitmapNewWidth")
 		Log.i("TAG", "bitmapNewHeight $bitmapNewHeight")
 		val bitmapGapX: Int
